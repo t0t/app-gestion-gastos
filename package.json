@@ -1,0 +1,26 @@
+{
+  "name": "gastos-app",
+  "version": "1.0.0",
+  "description": "Aplicación de monitoreo y gestión de gastos",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "ntl dev",
+    "build": "npx tailwindcss -i ./src/styles.css -o ./dist/output.css --watch",
+    "build:prod": "NODE_ENV=production npx tailwindcss -i ./src/styles.css -o ./dist/output.css --minify",
+    "test": "echo 'No tests configured'"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0",
+    "chart.js": "^4.4.7",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "netlify-cli": "^12.0.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "nodemon": "^3.0.2",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^4.0.0"
+  }
+}

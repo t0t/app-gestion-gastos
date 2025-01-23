@@ -4,53 +4,104 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestor de Gastos</title>
-  <link rel="stylesheet" href="style.css">
+  <link href="./dist/output.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
-<body>
-  <div class="container">
-    <h1>Gestor de Gastos</h1>
+<body class="min-h-screen bg-background">
+  <!-- Navbar -->
+  <nav class="bg-primary text-white p-4 shadow-lg">
+    <div class="container mx-auto font-alt font-semibold text-xl">
+      Gestor de Gastos
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container mx-auto p-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Form Section -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4 text-primary">Nuevo Gasto</h2>
     
-    <form id="gastoForm">
-      <div class="form-group">
-        <label for="descripcion">Descripción:</label>
-        <input type="text" id="descripcion" required>
-      </div>
-      
-      <div class="form-group">
-        <label for="monto">Monto:</label>
-        <input type="number" id="monto" step="0.01" required>
-      </div>
-      
-      <div class="form-group">
-        <label for="categoria">Categoría:</label>
-        <select id="categoria" required>
-          <option value="Alimentación">Alimentación</option>
-          <option value="Transporte">Transporte</option>
-          <option value="Entretenimiento">Entretenimiento</option>
-          <option value="Servicios">Servicios</option>
-          <option value="Otros">Otros</option>
-        </select>
-      </div>
-      
-      <button type="submit">Agregar Gasto</button>
-    </form>
 
-    <h2>Listado de Gastos</h2>
-    <table id="gastosTable">
-      <thead>
-        <tr>
-          <th>Descripción</th>
-          <th>Monto</th>
-          <th>Categoría</th>
-          <th>Fecha</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Los gastos se cargarán aquí dinámicamente -->
-      </tbody>
-    </table>
-  </div>
+        <form id="gastoForm" class="space-y-4">
+          <div class="form-group">
+            <label for="descripcion" class="block text-sm font-medium text-slate-700 mb-1">Descripción:</label>
+            <input type="text" id="descripcion" required
+              class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary">
+          </div>
+          
+          <div class="form-group">
+            <label for="monto" class="block text-sm font-medium text-slate-700 mb-1">Monto:</label>
+            <input type="number" id="monto" step="0.01" required
+              class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary">
+          </div>
+          
+          <div class="form-group">
+            <label for="categoria" class="block text-sm font-medium text-slate-700 mb-1">Categoría:</label>
+            <select id="categoria" required
+              class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary">
+              <option value="Alimentación">Alimentación</option>
+              <option value="Transporte">Transporte</option>
+              <option value="Entretenimiento">Entretenimiento</option>
+              <option value="Servicios">Servicios</option>
+              <option value="Otros">Otros</option>
+            </select>
+          </div>
+          
+          <button type="submit"
+            class="w-full bg-secondary text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
+            Agregar Gasto
+          </button>
+        </form>
+      </div>
 
+      <!-- List Section -->
+      <div class="bg-white rounded-lg shadow-md p-6 col-span-2">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-semibold text-primary">Listado de Gastos</h2>
+          <div class="space-x-2">
+            <button id="exportBtn" class="bg-accent text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors">
+              Exportar
+            </button>
+            <button id="importBtn" class="bg-white border border-slate-300 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors">
+              Importar
+            </button>
+            <button id="reportBtn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors">
+              Reporte PDF
+            </button>
+          </div>
+        </div>
+        
+        <table id="gastosTable" class="w-full divide-y divide-slate-200">
+          <thead class="bg-slate-50">
+            <tr>
+              <th class="px-4 py-2 text-left text-sm font-medium text-slate-700">Descripción</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-slate-700">Monto</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-slate-700">Categoría</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-slate-700">Fecha</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            <!-- Los gastos se cargarán aquí dinámicamente -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Gráfica Section -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4 text-primary">Gastos Mensuales</h2>
+        <canvas id="gastosChart" class="w-full h-[50vh]"></canvas>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <script>
+    const { jsPDF } = window.jspdf;
+  </script>
   <script src="app.js"></script>
 </body>
 </html>
