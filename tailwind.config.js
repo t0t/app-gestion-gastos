@@ -1,7 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./**/*.{html,js}"
+    "./index.html",
+    "./app.js",
+    "./src/**/*.{html,js}",
+    "./netlify/functions/**/*.js"
   ],
   darkMode: 'class',
   theme: {
