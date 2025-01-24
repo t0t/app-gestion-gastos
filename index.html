@@ -1,101 +1,165 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestor de Gastos</title>
   <link href="./dist/output.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Poppins:wght@300;400;600&display=swap"
+    rel="stylesheet">
 </head>
+
 <body class="min-h-screen bg-background">
-  <!-- Navbar -->
-  <nav class="bg-primary text-white p-4 shadow-lg">
-    <div class="container mx-auto font-alt font-semibold text-xl">
-      Gestor de Gastos
-    </div>
-  </nav>
+
 
   <!-- Main Content -->
   <main class="container mx-auto p-6">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Form Section -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-semibold mb-4 text-primary">Nuevo Gasto</h2>
-    
 
-        <form id="gastoForm" class="space-y-4">
-          <div class="form-group">
-            <label for="descripcion" class="block text-sm font-medium text-slate-700 mb-1">Descripción:</label>
-            <input type="text" id="descripcion" required
-              class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary">
-          </div>
-          
-          <div class="form-group">
-            <label for="monto" class="block text-sm font-medium text-slate-700 mb-1">Monto:</label>
-            <input type="number" id="monto" step="0.01" required
-              class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary">
-          </div>
-          
-          <div class="form-group">
-            <label for="categoria" class="block text-sm font-medium text-slate-700 mb-1">Categoría:</label>
-            <select id="categoria" required
-              class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary">
-              <option value="Alimentación">Alimentación</option>
-              <option value="Transporte">Transporte</option>
-              <option value="Entretenimiento">Entretenimiento</option>
-              <option value="Servicios">Servicios</option>
-              <option value="Otros">Otros</option>
-            </select>
-          </div>
-          
-          <button type="submit"
-            class="w-full bg-secondary text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
-            Agregar Gasto
-          </button>
-        </form>
-      </div>
+    <!-- Gráfica Section -->
+    <div class="grid   p-6 col-span-full">
+      <h2 class="text-xl font-semibold mb-4 text-primary">Gastos Mensuales</h2>
+      <div id="gastosChart" class="w-full relative z-10"></div>
+    </div>
 
-      <!-- List Section -->
-      <div class="bg-white rounded-lg shadow-md p-6 col-span-2">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-semibold text-primary">Listado de Gastos</h2>
-          <div class="space-x-2">
-            <button id="exportBtn" class="bg-accent text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition-colors">
-              Exportar
-            </button>
-            <button id="importBtn" class="bg-white border border-slate-300 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors">
-              Importar
-            </button>
-            <button id="reportBtn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors">
-              Reporte PDF
-            </button>
-          </div>
-        </div>
-        
-        <table id="gastosTable" class="w-full divide-y divide-slate-200">
-          <thead class="bg-slate-50">
-            <tr>
-              <th class="px-4 py-2 text-left text-sm font-medium text-slate-700">Descripción</th>
-              <th class="px-4 py-2 text-left text-sm font-medium text-slate-700">Monto</th>
-              <th class="px-4 py-2 text-left text-sm font-medium text-slate-700">Categoría</th>
-              <th class="px-4 py-2 text-left text-sm font-medium text-slate-700">Fecha</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-200">
-            <!-- Los gastos se cargarán aquí dinámicamente -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Gráfica Section -->
-      <div class="bg-white rounded-lg shadow-md p-6">
-        <h2 class="text-xl font-semibold mb-4 text-primary">Gastos Mensuales</h2>
-        <canvas id="gastosChart" class="w-full h-[50vh]"></canvas>
+    <!-- Totales por Categoría -->
+    <div class="grid p-6 col-span-full">
+      <h3 class="text-lg font-semibold mb-2 text-slate-700">Totales por Categoría</h3>
+      <div id="totalesCategorias" class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <!-- Los totales se cargarán aquí dinámicamente -->
       </div>
     </div>
+
+    <!-- Totales por Mes -->
+    <div class="grid p-6 col-span-full">
+      <h3 class="text-lg font-semibold mb-2 text-slate-700">Totales por Mes</h3>
+      <div id="totalesMeses" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Los totales mensuales se cargarán aquí dinámicamente -->
+      </div>
+    </div>
+
+    <!-- Floating Buttons -->
+    <div class="fixed top-20 right-6 z-30 flex flex-col space-y-2">
+      <button id="toggleFormBtn"
+        class="bg-secondary text-white p-4 rounded-full shadow-lg hover:bg-blue-600 transition-all group"
+        title="Agregar gasto">
+        <div
+          class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+          Agregar gasto
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+      </button>
+
+      <button id="exportBtn"
+        class="bg-accent text-white p-4 rounded-full shadow-lg hover:bg-emerald-600 transition-all group"
+        title="Exportar datos">
+        <div
+          class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+          Exportar datos
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+      </button>
+
+      <button id="importBtn" class=" text-slate-700 p-4 rounded-full shadow-lg hover:bg-slate-50 transition-all group"
+        title="Importar datos">
+        <div
+          class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+          Importar datos
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+        </svg>
+      </button>
+
+      <button id="reportBtn"
+        class="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-slate-700 transition-all group"
+        title="Generar reporte">
+        <div
+          class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+          Generar reporte
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Form Section -->
+    <div id="formContainer" class= p-6 fixed top-24 right-6 z-40 hidden">
+      <h2 class="text-xl font-semibold mb-4 text-primary">Nuevo Gasto</h2>
+
+
+      <form id="gastoForm" class="space-y-4">
+        <div class="form-group">
+          <label for="descripcion" class="block text-sm font-medium text-slate-700 mb-1">Descripción:</label>
+          <input type="text" id="descripcion" required
+            class="w-full px-3 py-2 border border-slate-300  focus:ring-2 focus:ring-secondary focus:border-secondary">
+        </div>
+
+        <div class="form-group">
+          <label for="monto" class="block text-sm font-medium text-slate-700 mb-1">Monto:</label>
+          <input type="number" id="monto" step="0.01" required
+            class="w-full px-3 py-2 border border-slate-300  focus:ring-2 focus:ring-secondary focus:border-secondary">
+        </div>
+
+        <div class="form-group">
+          <label for="categoria" class="block text-sm font-medium text-slate-700 mb-1">Categoría:</label>
+          <select id="categoria" required
+            class="w-full px-3 py-2 border border-slate-300  focus:ring-2 focus:ring-secondary focus:border-secondary">
+            <option value="Alimentación">Alimentación</option>
+            <option value="Transporte">Transporte</option>
+            <option value="Entretenimiento">Entretenimiento</option>
+            <option value="Servicios">Servicios</option>
+            <option value="Otros">Otros</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="fecha" class="block text-sm font-medium text-slate-700 mb-1">Fecha:</label>
+          <input type="date" id="fecha" required
+            class="w-full px-3 py-2 border border-slate-300  focus:ring-2 focus:ring-secondary focus:border-secondary"
+            max="2025-12-31">
+        </div>
+
+        <button type="submit" class="w-full bg-secondary text-white py-2 px-4  hover:bg-blue-600 transition-colors">
+          Agregar Gasto
+        </button>
+      </form>
+    </div>
+
+    <!-- List Section -->
+    <div class="bg-white  p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-primary">Listado de Gastos</h2>
+        <div></div>
+      </div>
+
+      <table id="gastosTable" class="w-full divide-y divide-slate-200">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="px-4 py-2 text-left text-sm font-medium text-slate-700">Descripción</th>
+            <th class="px-4 py-2 text-left text-sm font-medium text-slate-700">Monto</th>
+            <th class="px-4 py-2 text-left text-sm font-medium text-slate-700">Categoría</th>
+            <th class="px-4 py-2 text-left text-sm font-medium text-slate-700">Fecha</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200">
+          <!-- Los gastos se cargarán aquí dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
@@ -104,4 +168,5 @@
   </script>
   <script src="app.js"></script>
 </body>
+
 </html>

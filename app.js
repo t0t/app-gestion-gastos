@@ -1,4 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Configurar botón flotante
+  const toggleFormBtn = document.getElementById('toggleFormBtn');
+  const formContainer = document.getElementById('formContainer');
+  
+  toggleFormBtn.addEventListener('click', () => {
+    formContainer.classList.toggle('hidden');
+  });
+
   const gastoForm = document.getElementById('gastoForm');
   const gastosTable = document.getElementById('gastosTable').getElementsByTagName('tbody')[0];
   const exportBtn = document.getElementById('exportBtn');
@@ -21,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
       descripcion: document.getElementById('descripcion').value,
       monto: parseFloat(document.getElementById('monto').value),
       categoria: document.getElementById('categoria').value,
-      fecha: new Date().toISOString().split('T')[0]
+      fecha: document.getElementById('fecha').value
     };
 
     // Guardar en localStorage
@@ -84,89 +92,145 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Configurar gráfica
-  const ctx = document.getElementById('gastosChart').getContext('2d');
-  let chart;
+  // Configurar gráfica con D3.js
+  const chartDiv = document.getElementById('gastosChart');
+  const margin = {top: 50, right: 40, bottom: 60, left: 60};
+  const width = chartDiv.clientWidth - margin.left - margin.right;
+  const height = 400 - margin.top - margin.bottom;
+  
+  const svg = d3.select(chartDiv)
+    .append('svg')
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom)
+      .style('overflow', 'visible')
+    .append('g')
+      .attr('transform', `translate(${margin.left},${margin.top})`);
+
+  // Selector de vista
+  const selector = d3.select(chartDiv)
+    .insert('div', ':first-child')
+    .style('position', 'absolute')
+    .style('top', '10px')
+    .style('left', '10px');
+
+  selector.append('select')
+    .attr('id', 'viewSelector')
+    .selectAll('option')
+    .data(['Días', 'Meses'])
+    .enter()
+    .append('option')
+      .text(d => d)
+      .attr('value', d => d);
 
   function actualizarGrafica() {
     const gastos = JSON.parse(localStorage.getItem('gastos') || '[]');
-    
-    // Agrupar gastos por mes
-    const gastosPorMes = gastos.reduce((acc, gasto) => {
-      const fecha = new Date(gasto.fecha);
-      const mes = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
-      
-      if (!acc[mes]) {
-        acc[mes] = 0;
+    const view = document.getElementById('viewSelector').value;
+
+    // Agrupar gastos según la vista seleccionada
+    const groupedData = gastos.reduce((acc, gasto) => {
+      try {
+        const fecha = new Date(gasto.fecha);
+        if (isNaN(fecha)) throw new Error('Fecha inválida');
+        
+        const key = view === 'Días' ?
+          fecha.toISOString().split('T')[0] :
+          `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+        
+        if (!acc[key]) {
+          acc[key] = 0;
+        }
+        acc[key] += parseFloat(gasto.monto) || 0;
+        
+        return acc;
+      } catch (error) {
+        console.error('Error procesando gasto:', gasto, error);
+        return acc;
       }
-      acc[mes] += gasto.monto;
-      
+    }, {});
+
+    // Ordenar y preparar datos para la gráfica
+    const labels = Object.keys(groupedData).sort((a, b) => new Date(a) - new Date(b));
+    const values = labels.map(label => groupedData[label]);
+
+    // Escalas
+    const x = d3.scaleBand()
+      .domain(labels)
+      .range([0, width])
+      .padding(0.1);
+
+    const y = d3.scaleLinear()
+      .domain([0, d3.max(values)])
+      .nice()
+      .range([height, 0]);
+
+    // Formatear fechas en el eje X
+    const formatDate = d3.timeFormat(view === 'Días' ? '%d/%m' : '%m/%Y');
+
+    // Ejes
+    svg.selectAll('.axis').remove();
+    
+    svg.append('g')
+      .attr('class', 'axis axis--x')
+      .attr('transform', `translate(0,${height})`)
+      .call(d3.axisBottom(x)
+        .tickFormat(d => formatDate(new Date(d)))
+        .tickSizeOuter(0));
+
+    svg.append('g')
+      .attr('class', 'axis axis--y')
+      .call(d3.axisLeft(y).ticks(5));
+
+    // Barras
+    svg.selectAll('.bar').remove();
+    
+    svg.selectAll('.bar')
+      .data(labels)
+      .enter()
+      .append('rect')
+        .attr('class', 'bar')
+        .attr('x', d => x(d))
+        .attr('y', d => y(groupedData[d]))
+        .attr('width', x.bandwidth())
+        .attr('height', d => height - y(groupedData[d]))
+        .attr('fill', '#3B82F6');
+  }
+
+  // Actualizar gráfica al cambiar la vista
+  d3.select('#viewSelector').on('change', actualizarGrafica);
+
+  function actualizarTotalesCategorias() {
+    const gastos = JSON.parse(localStorage.getItem('gastos') || '[]');
+    const totales = gastos.reduce((acc, gasto) => {
+      if (!acc[gasto.categoria]) {
+        acc[gasto.categoria] = 0;
+      }
+      acc[gasto.categoria] += gasto.monto;
       return acc;
     }, {});
 
-    // Ordenar meses y preparar datos para la gráfica
-    const meses = Object.keys(gastosPorMes).sort();
-    const montos = meses.map(mes => gastosPorMes[mes]);
-
-    const data = {
-      labels: meses,
-      datasets: [{
-        label: 'Gastos Mensuales',
-        data: montos,
-        backgroundColor: '#3B82F6',
-        borderColor: '#1E40AF',
-        borderWidth: 2,
-        hoverBackgroundColor: '#2563EB'
-      }]
-    };
-
-    if (chart) {
-      chart.data = data;
-      chart.update();
-    } else {
-      chart = new Chart(ctx, {
-        type: 'bar',
-        indexAxis: 'y',
-        data: data,
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          aspectRatio: 3,
-          indexAxis: 'y',
-          scales: {
-            x: {
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: 'Total Gastado (€)'
-              }
-            },
-            y: {
-              title: {
-                display: true,
-                text: 'Mes'
-              }
-            }
-          },
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: function(context) {
-                  return `€${context.raw.toFixed(2)}`;
-                }
-              }
-            }
-          }
-        }
-      });
-    }
+    const totalesContainer = document.getElementById('totalesCategorias');
+    totalesContainer.innerHTML = Object.entries(totales)
+      .map(([categoria, total]) => `
+        <div class="bg-white p-4 rounded-lg shadow-sm">
+          <p class="text-sm text-slate-500">${categoria}</p>
+          <p class="text-lg font-semibold text-slate-800">€${total.toFixed(2)}</p>
+        </div>
+      `)
+      .join('');
   }
 
-  // Actualizar gráfica al cargar y al agregar nuevos gastos
+  // Actualizar gráfica y totales al cargar y al agregar nuevos gastos
   actualizarGrafica();
-  gastoForm.addEventListener('submit', actualizarGrafica);
+  actualizarTotalesCategorias();
+  gastoForm.addEventListener('submit', () => {
+    actualizarGrafica();
+    actualizarTotalesCategorias();
+  });
   importBtn.addEventListener('click', () => {
-    fileInput.addEventListener('change', actualizarGrafica, { once: true });
+    fileInput.addEventListener('change', () => {
+      actualizarGrafica();
+      actualizarTotalesCategorias();
+    }, { once: true });
   });
 
   // Generar reporte PDF
