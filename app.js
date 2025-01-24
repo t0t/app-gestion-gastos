@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Cargar gastos al iniciar
   cargarGastos();
+  actualizarTotalesMensuales();
 
   // Manejar envío del formulario
   gastoForm.addEventListener('submit', (e) => {
@@ -73,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     formContainer.classList.add('hidden');
     gastoForm.reset();
     cargarGastos();
+    actualizarTotalesMensuales();
     actualizarGrafica();
   });
 
@@ -210,6 +212,111 @@ document.addEventListener('DOMContentLoaded', () => {
       .attr('fill', '#ED8936');
   }
 
+  // Función para actualizar los totales mensuales
+  function actualizarTotalesMensuales() {
+    // Verificar que los elementos existen
+    const currentMonthTotal = document.getElementById('currentMonthTotal');
+    const lastMonthTotal = document.getElementById('lastMonthTotal');
+    const twoMonthsAgoTotal = document.getElementById('twoMonthsAgoTotal');
+    const threeMonthsAgoTotal = document.getElementById('threeMonthsAgoTotal');
+    const diffElement = document.getElementById('currentMonthDiff');
+
+    if (!currentMonthTotal || !lastMonthTotal || !twoMonthsAgoTotal || !threeMonthsAgoTotal || !diffElement) {
+      console.warn('Algunos elementos de totales mensuales no se encontraron en el DOM');
+      return;
+    }
+
+    const gastos = JSON.parse(localStorage.getItem('gastos') || '[]');
+    console.log('Gastos cargados:', gastos);
+    
+    const fechaActual = new Date();
+    console.log('Fecha actual:', fechaActual);
+    
+    // Obtener el primer día de cada mes
+    const inicioMesActual = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), 1);
+    const inicioMesAnterior = new Date(fechaActual.getFullYear(), fechaActual.getMonth() - 1, 1);
+    const inicioDosAnteriores = new Date(fechaActual.getFullYear(), fechaActual.getMonth() - 2, 1);
+    const inicioTresAnteriores = new Date(fechaActual.getFullYear(), fechaActual.getMonth() - 3, 1);
+    const inicioSiguienteMes = new Date(fechaActual.getFullYear(), fechaActual.getMonth() + 1, 1);
+
+    console.log('Períodos de cálculo:');
+    console.log('- Mes actual:', inicioMesActual, 'hasta', inicioSiguienteMes);
+    console.log('- Mes anterior:', inicioMesAnterior, 'hasta', inicioMesActual);
+    console.log('- Dos meses atrás:', inicioDosAnteriores, 'hasta', inicioMesAnterior);
+    console.log('- Tres meses atrás:', inicioTresAnteriores, 'hasta', inicioDosAnteriores);
+
+    // Calcular totales por mes
+    const totalMesActual = calcularTotalPeriodo(gastos, inicioMesActual, inicioSiguienteMes);
+    const totalMesAnterior = calcularTotalPeriodo(gastos, inicioMesAnterior, inicioMesActual);
+    const totalDosAnteriores = calcularTotalPeriodo(gastos, inicioDosAnteriores, inicioMesAnterior);
+    const totalTresAnteriores = calcularTotalPeriodo(gastos, inicioTresAnteriores, inicioDosAnteriores);
+
+    console.log('Totales calculados:');
+    console.log('- Mes actual:', totalMesActual);
+    console.log('- Mes anterior:', totalMesAnterior);
+    console.log('- Dos meses atrás:', totalDosAnteriores);
+    console.log('- Tres meses atrás:', totalTresAnteriores);
+
+    // Calcular diferencia porcentual
+    const diferenciaPorcentual = totalMesAnterior !== 0 
+      ? ((totalMesActual - totalMesAnterior) / totalMesAnterior * 100).toFixed(1)
+      : 0;
+
+    // Actualizar elementos en el DOM
+    currentMonthTotal.textContent = `€${totalMesActual.toFixed(2)}`;
+    lastMonthTotal.textContent = `€${totalMesAnterior.toFixed(2)}`;
+    twoMonthsAgoTotal.textContent = `€${totalDosAnteriores.toFixed(2)}`;
+    threeMonthsAgoTotal.textContent = `€${totalTresAnteriores.toFixed(2)}`;
+
+    // Actualizar diferencia porcentual y flecha
+    const isPositive = diferenciaPorcentual > 0;
+    const arrowPath = isPositive 
+      ? "M5 10l7-7m0 0l7 7m-7-7v18"  // Flecha hacia arriba
+      : "M19 14l-7 7m0 0l-7-7m7 7V3"; // Flecha hacia abajo
+
+    diffElement.innerHTML = `
+      <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${arrowPath}"/>
+      </svg>
+      ${Math.abs(diferenciaPorcentual)}%
+    `;
+    diffElement.className = `text-${isPositive ? 'green' : 'red'}-500 flex items-center`;
+  }
+
+  // Función auxiliar para calcular el total en un período
+  function calcularTotalPeriodo(gastos, inicio, fin) {
+    // Convertir las fechas de inicio y fin a fechas UTC
+    const inicioUTC = Date.UTC(inicio.getFullYear(), inicio.getMonth(), inicio.getDate());
+    const finUTC = Date.UTC(fin.getFullYear(), fin.getMonth(), fin.getDate());
+    
+    console.log('Calculando total para período UTC:', new Date(inicioUTC), 'hasta', new Date(finUTC));
+    console.log('Gastos disponibles:', gastos);
+    
+    const gastosEnPeriodo = gastos.filter(gasto => {
+      // Convertir la fecha del gasto a UTC
+      const [year, month, day] = gasto.fecha.split('-').map(Number);
+      const fechaGastoUTC = Date.UTC(year, month - 1, day);
+      console.log('Comparando fecha UTC:', new Date(fechaGastoUTC), 'con inicio:', new Date(inicioUTC), 'y fin:', new Date(finUTC));
+      return fechaGastoUTC >= inicioUTC && fechaGastoUTC < finUTC;
+    });
+    
+    console.log('Gastos en período:', gastosEnPeriodo);
+    
+    const total = gastosEnPeriodo.reduce((total, gasto) => {
+      // Asegurarnos de que el importe es un número válido
+      const importe = typeof gasto.importe === 'string' ? parseFloat(gasto.importe.replace(',', '.')) : parseFloat(gasto.importe);
+      if (isNaN(importe)) {
+        console.warn('Importe inválido encontrado:', gasto.importe, 'para el gasto:', gasto);
+        return total;
+      }
+      console.log('Sumando importe:', importe, 'al total:', total);
+      return total + importe;
+    }, 0);
+    
+    console.log('Total calculado:', total);
+    return isNaN(total) ? 0 : total; // Si por alguna razón el total es NaN, devolver 0
+  }
+
   // Exportar datos
   exportBtn.addEventListener('click', () => {
     const gastos = localStorage.getItem('gastos') || '[]';
@@ -238,6 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const gastos = JSON.parse(e.target.result);
           localStorage.setItem('gastos', JSON.stringify(gastos));
           cargarGastos();
+          actualizarTotalesMensuales();
         } catch (error) {
           console.error('Error al importar archivo:', error);
         }

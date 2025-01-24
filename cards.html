@@ -1,0 +1,44 @@
+<!-- Monthly Totals Cards -->
+<div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+  <!-- Card 1 - Current Month -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Este mes</h3>
+    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="currentMonthTotal">€0.00</p>
+    <div class="mt-2 flex items-center text-sm">
+      <span class="text-green-500 flex items-center" id="currentMonthDiff">
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+        </svg>
+        0%
+      </span>
+      <span class="text-gray-500 dark:text-gray-400 ml-2">vs mes anterior</span>
+    </div>
+  </div>
+
+  <!-- Card 2 - Last Month -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Mes anterior</h3>
+    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="lastMonthTotal">€0.00</p>
+    <div class="mt-2 flex items-center text-sm">
+      <span class="text-gray-500 dark:text-gray-400">Total gastado</span>
+    </div>
+  </div>
+
+  <!-- Card 3 - Two Months Ago -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Hace dos meses</h3>
+    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="twoMonthsAgoTotal">€0.00</p>
+    <div class="mt-2 flex items-center text-sm">
+      <span class="text-gray-500 dark:text-gray-400">Total gastado</span>
+    </div>
+  </div>
+
+  <!-- Card 4 - Three Months Ago -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">Hace tres meses</h3>
+    <p class="text-2xl font-bold text-gray-900 dark:text-white" id="threeMonthsAgoTotal">€0.00</p>
+    <div class="mt-2 flex items-center text-sm">
+      <span class="text-gray-500 dark:text-gray-400">Total gastado</span>
+    </div>
+  </div>
+</div>
