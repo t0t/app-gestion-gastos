@@ -2,6 +2,8 @@
 
 Aplicación web para el seguimiento y gestión de gastos personales.
 
+![Screenshot de la aplicación](dist/screenshot.png)
+
 ## Características Principales
 
 - Registro de gastos con descripción, monto, categoría y fecha
