@@ -1,10 +1,22 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
   // Configurar botón flotante
   const toggleFormBtn = document.getElementById('toggleFormBtn');
   const formContainer = document.getElementById('formContainer');
   
+  // Mostrar/ocultar formulario y manejar clics fuera
   toggleFormBtn.addEventListener('click', () => {
     formContainer.classList.toggle('hidden');
+  });
+
+  // Ocultar formulario al hacer clic fuera
+  document.addEventListener('click', (e) => {
+    const isClickInside = formContainer.contains(e.target) || toggleFormBtn.contains(e.target);
+    if (!isClickInside && !formContainer.classList.contains('hidden')) {
+      formContainer.classList.add('hidden');
+    }
   });
 
   const gastoForm = document.getElementById('gastoForm');
@@ -52,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
       row.insertCell().textContent = gasto.descripcion;
       row.insertCell().textContent = `€${gasto.monto.toFixed(2)}`;
       row.insertCell().textContent = gasto.categoria;
-      row.insertCell().textContent = gasto.fecha;
+      row.insertCell().textContent = formatearFecha(gasto.fecha);
     });
   }
 
@@ -219,17 +231,53 @@ document.addEventListener('DOMContentLoaded', () => {
       .join('');
   }
 
+  function formatearFecha(fechaStr) {
+    const fecha = new Date(fechaStr);
+    return `${fecha.getDate()} ${meses[fecha.getMonth()]} ${fecha.getFullYear()}`;
+  }
+
+  function actualizarTotalesMeses() {
+    const gastos = JSON.parse(localStorage.getItem('gastos') || '[]');
+    const totales = gastos.reduce((acc, gasto) => {
+      const fecha = new Date(gasto.fecha);
+      const mes = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+      
+      if (!acc[mes]) {
+        acc[mes] = 0;
+      }
+      acc[mes] += gasto.monto;
+      return acc;
+    }, {});
+
+    const totalesContainer = document.getElementById('totalesMeses');
+    totalesContainer.innerHTML = Object.entries(totales)
+      .map(([mes, total]) => {
+        const [year, month] = mes.split('-');
+        const fechaFormateada = `1 ${meses[parseInt(month) - 1]} ${year}`;
+        return `
+          <div class="bg-white p-4 rounded-lg shadow-sm">
+            <p class="text-sm text-slate-500">${fechaFormateada}</p>
+            <p class="text-lg font-semibold text-slate-800">€${total.toFixed(2)}</p>
+          </div>
+        `;
+      })
+      .join('');
+  }
+
   // Actualizar gráfica y totales al cargar y al agregar nuevos gastos
   actualizarGrafica();
   actualizarTotalesCategorias();
+  actualizarTotalesMeses();
   gastoForm.addEventListener('submit', () => {
     actualizarGrafica();
     actualizarTotalesCategorias();
+    actualizarTotalesMeses();
   });
   importBtn.addEventListener('click', () => {
     fileInput.addEventListener('change', () => {
       actualizarGrafica();
       actualizarTotalesCategorias();
+      actualizarTotalesMeses();
     }, { once: true });
   });
 
@@ -246,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Tabla de gastos
     const columns = ['Descripción', 'Monto', 'Categoría', 'Fecha'];
-    const rows = gastos.map(g => [g.descripcion, `€${g.monto.toFixed(2)}`, g.categoria, g.fecha]);
+    const rows = gastos.map(g => [g.descripcion, `€${g.monto.toFixed(2)}`, g.categoria, formatearFecha(g.fecha)]);
     
     doc.autoTable({
       head: [columns],
