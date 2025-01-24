@@ -1,182 +1,250 @@
 <!DOCTYPE html>
-<html lang="es">
+<html class="transition-colors duration-200">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestor de Gastos</title>
+  <title>Gestión de Gastos</title>
   <link href="./src/output.dev.css" rel="stylesheet">
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Poppins:wght@300;400;600&display=swap"
     rel="stylesheet">
-  <link rel="icon" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/svgs/solid/coins.svg">
+  <link rel="icon" href="./dist/coins.svg">
+  <style>
+    :root {
+      --dark-gray: #2D3748;
+      --orange: #ED8936;
+      --white: #FFFFFF;
+      --light-gray: #EDF2F7;
+      --black: #1A202C;
+
+      /* Theme variables */
+      --background: var(--white);
+      --primary: var(--dark-gray);
+      --secondary: var(--orange);
+      --accent: var(--black);
+    }
+
+    :root.dark {
+      --background: var(--black);
+      --primary: var(--light-gray);
+      --secondary: var(--orange);
+      --accent: var(--white);
+    }
+
+    body {
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    body.dark {
+      background-color: #1A202C;
+      color: #EDF2F7;
+    }
+
+    body.light {
+      background-color: #FFFFFF;
+      color: #2D3748;
+    }
+
+    /* Estilo para el título */
+    h1 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 2.5rem;
+      color: var(--secondary);
+      text-align: center;
+      margin-top: 1rem;
+    }
+  </style>
 </head>
 
-<body class="min-h-screen bg-background">
+<body class="min-h-screen transition-colors duration-200 bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+  <div class="container mx-auto px-4">
+
+    <!-- Main Content -->
+    <main class="container mx-auto">
+      <!-- Header -->
+      <header class="container">
+        <img src="./dist/logo.svg" alt="Logo" class="block pt-6 h-40 w-auto">
+        <h1 class="text-orange">Money flies</h1>
+      </header>
+
+      <!-- Content Sections -->
+      <div class="p-6">
+        <!-- Gráfica Section -->
+        <div class="grid p-6 col-span-full">
+          <h2 class="text-xl font-semibold mb-4 text-dark-gray dark:text-light-gray">Gastos Mensuales</h2>
+          <div id="gastosChart" class="w-full relative z-10 bg-white dark:bg-dark-gray rounded-lg p-4"></div>
+        </div>
+
+        <!-- Totales por Categoría -->
+        <div class="grid p-6 col-span-full">
+          <h3 class="text-lg font-semibold mb-2 text-dark-gray dark:text-light-gray">Totales por Categoría</h3>
+          <div id="totalesCategorias" class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <!-- Los totales se cargarán aquí dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Totales por Mes -->
+        <div class="grid p-6 col-span-full">
+          <h3 class="text-lg font-semibold mb-2 text-dark-gray dark:text-light-gray">Totales por Mes</h3>
+          <div id="totalesMeses" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Los totales mensuales se cargarán aquí dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Floating Buttons -->
+        <div class="fixed top-32 right-6 z-30 flex flex-col space-y-2">
 
 
-  <!-- Main Content -->
-  <main class="container mx-auto p-6">
 
-    <!-- Gráfica Section -->
-    <div class="grid   p-6 col-span-full">
-      <h2 class="text-xl font-semibold mb-4 text-primary">Gastos Mensuales</h2>
-      <div id="gastosChart" class="w-full relative z-10"></div>
-    </div>
+          <button id="themeToggle" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+            <svg id="sunIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+              </path>
+            </svg>
+            <svg id="moonIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+              </path>
+            </svg>
+          </button>
 
-    <!-- Totales por Categoría -->
-    <div class="grid p-6 col-span-full">
-      <h3 class="text-lg font-semibold mb-2 text-slate-700">Totales por Categoría</h3>
-      <div id="totalesCategorias" class="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <!-- Los totales se cargarán aquí dinámicamente -->
+
+          <button id="toggleFormBtn"
+            class="bg-orange text-white p-4 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
+            title="Agregar gasto">
+            <div
+              class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+              Agregar gasto
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+
+          <button id="exportBtn"
+            class="bg-accent text-white p-4 rounded-full shadow-lg hover:bg-emerald-600 transition-colors"
+            title="Exportar datos">
+            <div
+              class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+              Exportar datos
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+          </button>
+
+          <button id="importBtn" class=" text-slate-700 p-4 rounded-full shadow-lg hover:bg-slate-50 transition-colors"
+            title="Importar datos">
+            <div
+              class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+              Importar datos
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+          </button>
+
+          <button id="reportBtn"
+            class="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-slate-700 transition-colors"
+            title="Generar reporte">
+            <div
+              class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+              Generar reporte
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Form Section -->
+        <div id="formContainer"
+          class="p-6 fixed top-24 right-6 z-40 hidden bg-white dark:bg-dark-gray rounded-lg shadow-lg">
+          <h2 class="text-xl font-semibold mb-4 text-dark-gray dark:text-light-gray">Nuevo Gasto</h2>
+
+          <form id="gastoForm" class="space-y-4">
+            <div class="form-group">
+              <label for="descripcion"
+                class="block text-sm font-medium text-dark-gray dark:text-light-gray mb-1">Descripción:</label>
+              <input type="text" id="descripcion" required
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-dark-gray text-dark-gray dark:text-light-gray focus:ring-2 focus:ring-orange focus:border-orange">
+            </div>
+
+            <div class="form-group">
+              <label for="monto"
+                class="block text-sm font-medium text-dark-gray dark:text-light-gray mb-1">Monto:</label>
+              <input type="number" id="monto" step="0.01" required
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-dark-gray text-dark-gray dark:text-light-gray focus:ring-2 focus:ring-orange focus:border-orange">
+            </div>
+
+            <div class="form-group">
+              <label for="categoria"
+                class="block text-sm font-medium text-dark-gray dark:text-light-gray mb-1">Categoría:</label>
+              <select id="categoria" required
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-dark-gray text-dark-gray dark:text-light-gray focus:ring-2 focus:ring-orange focus:border-orange">
+                <option value="Alimentación">Alimentación</option>
+                <option value="Transporte">Transporte</option>
+                <option value="Entretenimiento">Entretenimiento</option>
+                <option value="Servicios">Servicios</option>
+                <option value="Otros">Otros</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="fecha"
+                class="block text-sm font-medium text-dark-gray dark:text-light-gray mb-1">Fecha:</label>
+              <input type="date" id="fecha" required
+                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-dark-gray text-dark-gray dark:text-light-gray focus:ring-2 focus:ring-orange focus:border-orange"
+                max="2025-12-31">
+            </div>
+
+            <button type="submit" class="w-full bg-orange text-white py-2 px-4 hover:bg-blue-600 transition-colors">
+              Agregar Gasto
+            </button>
+          </form>
+        </div>
+
+        <!-- List Section -->
+        <div class="bg-white dark:bg-dark-gray p-6 rounded-lg">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-dark-gray dark:text-light-gray">Listado de Gastos</h2>
+            <div></div>
+          </div>
+
+          <table id="gastosTable" class="w-full">
+            <thead class="bg-slate-50 dark:bg-slate-700">
+              <tr class="text-left">
+                <th class="px-6 py-4 text-sm font-medium text-dark-gray dark:text-light-gray w-2/5">Descripción</th>
+                <th class="px-6 py-4 text-sm font-medium text-dark-gray dark:text-light-gray w-1/5">Monto</th>
+                <th class="px-6 py-4 text-sm font-medium text-dark-gray dark:text-light-gray w-1/5">Categoría</th>
+                <th class="px-6 py-4 text-sm font-medium text-dark-gray dark:text-light-gray w-1/5">Fecha</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-600">
+              <!-- Los gastos se cargarán aquí dinámicamente -->
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-
-    <!-- Totales por Mes -->
-    <div class="grid p-6 col-span-full">
-      <h3 class="text-lg font-semibold mb-2 text-slate-700">Totales por Mes</h3>
-      <div id="totalesMeses" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <!-- Los totales mensuales se cargarán aquí dinámicamente -->
-      </div>
-    </div>
-
-    <!-- Theme Toggle -->
-    <button id="themeToggle" class="fixed top-20 right-6 z-40 p-3 bg-white dark:bg-slate-800 rounded-full shadow-lg hover:shadow-md transition-all">
-      <svg id="sunIcon" class="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-      <svg id="moonIcon" class="h-6 w-6 text-blue-500 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-      </svg>
-    </button>
-
-    <!-- Floating Buttons -->
-    <div class="fixed top-32 right-6 z-30 flex flex-col space-y-2">
-      <button id="toggleFormBtn"
-        class="bg-secondary text-white p-4 rounded-full shadow-lg hover:bg-blue-600 transition-all group"
-        title="Agregar gasto">
-        <div
-          class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-          Agregar gasto
-        </div>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-      </button>
-
-      <button id="exportBtn"
-        class="bg-accent text-white p-4 rounded-full shadow-lg hover:bg-emerald-600 transition-all group"
-        title="Exportar datos">
-        <div
-          class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-          Exportar datos
-        </div>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-        </svg>
-      </button>
-
-      <button id="importBtn" class=" text-slate-700 p-4 rounded-full shadow-lg hover:bg-slate-50 transition-all group"
-        title="Importar datos">
-        <div
-          class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-          Importar datos
-        </div>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-        </svg>
-      </button>
-
-      <button id="reportBtn"
-        class="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-slate-700 transition-all group"
-        title="Generar reporte">
-        <div
-          class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-          Generar reporte
-        </div>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-      </button>
-    </div>
-
-    <!-- Form Section -->
-    <div id="formContainer" class="p-6 fixed top-24 right-6 z-40 hidden bg-white rounded-lg shadow-lg">
-      <h2 class="text-xl font-semibold mb-4 text-primary">Nuevo Gasto</h2>
-
-
-      <form id="gastoForm" class="space-y-4">
-        <div class="form-group">
-          <label for="descripcion" class="block text-sm font-medium text-slate-700 mb-1">Descripción:</label>
-          <input type="text" id="descripcion" required
-            class="w-full px-3 py-2 border border-slate-300  focus:ring-2 focus:ring-secondary focus:border-secondary">
-        </div>
-
-        <div class="form-group">
-          <label for="monto" class="block text-sm font-medium text-slate-700 mb-1">Monto:</label>
-          <input type="number" id="monto" step="0.01" required
-            class="w-full px-3 py-2 border border-slate-300  focus:ring-2 focus:ring-secondary focus:border-secondary">
-        </div>
-
-        <div class="form-group">
-          <label for="categoria" class="block text-sm font-medium text-slate-700 mb-1">Categoría:</label>
-          <select id="categoria" required
-            class="w-full px-3 py-2 border border-slate-300  focus:ring-2 focus:ring-secondary focus:border-secondary">
-            <option value="Alimentación">Alimentación</option>
-            <option value="Transporte">Transporte</option>
-            <option value="Entretenimiento">Entretenimiento</option>
-            <option value="Servicios">Servicios</option>
-            <option value="Otros">Otros</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="fecha" class="block text-sm font-medium text-slate-700 mb-1">Fecha:</label>
-          <input type="date" id="fecha" required
-            class="w-full px-3 py-2 border border-slate-300  focus:ring-2 focus:ring-secondary focus:border-secondary"
-            max="2025-12-31">
-        </div>
-
-        <button type="submit" class="w-full bg-secondary text-white py-2 px-4  hover:bg-blue-600 transition-colors">
-          Agregar Gasto
-        </button>
-      </form>
-    </div>
-
-    <!-- List Section -->
-    <div class="bg-white  p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold text-primary">Listado de Gastos</h2>
-        <div></div>
-      </div>
-
-      <table id="gastosTable" class="w-full">
-        <thead class="bg-slate-50">
-          <tr class="text-left">
-            <th class="px-6 py-4 text-sm font-medium text-slate-700 w-2/5">Descripción</th>
-            <th class="px-6 py-4 text-sm font-medium text-slate-700 w-1/5">Monto</th>
-            <th class="px-6 py-4 text-sm font-medium text-slate-700 w-1/5">Categoría</th>
-            <th class="px-6 py-4 text-sm font-medium text-slate-700 w-1/5">Fecha</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-200">
-          <!-- Los gastos se cargarán aquí dinámicamente -->
-        </tbody>
-      </table>
-    </div>
-
-  </main>
-
+    </main>
+  </div>
   <script src="https://d3js.org/d3.v7.min.js"></script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
   <script>
-    const { jsPDF } = window.jspdf;
+    window.jsPDF = window.jspdf.jsPDF;
   </script>
+  <script src="./src/theme.js"></script>
   <script src="app.js"></script>
 </body>
 
