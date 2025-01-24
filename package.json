@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node --no-deprecation server.js",
-    "dev": "NODE_ENV=development concurrently \"npx tailwindcss -i ./src/styles.css -o ./src/output.dev.css --watch\" \"netlify dev\"",
+    "dev": "NODE_ENV=development concurrently \"npx tailwindcss -i ./src/styles.css -o ./src/output.dev.css --watch --source-map\" \"netlify dev\"",
     "build": "NODE_ENV=production npx tailwindcss -i ./src/styles.css -o ./dist/output.min.css --minify",
     "build:prod": "npm run build && node scripts/build.js",
     "test": "echo 'No tests configured'"

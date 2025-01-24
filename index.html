@@ -7,7 +7,7 @@
   <title>Gestión de Gastos</title>
   <link href="./src/output.dev.css" rel="stylesheet">
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Poppins:wght@300;400;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Montserrat:wght@300;400;600&display=swap"
     rel="stylesheet">
   <link rel="icon" href="./dist/coins.svg">
   <style>
@@ -48,7 +48,7 @@
 
     /* Estilo para el título */
     h1 {
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       font-size: 2.5rem;
       color: var(--secondary);
@@ -62,55 +62,54 @@
   <div class="container mx-auto px-4">
 
     <!-- Main Content -->
-    <main class="container mx-auto">
+    <main class="container grid grid-cols-1 md:grid-cols-3 gap-4 mx-auto">
       <!-- Header -->
-      <header class="container">
-        <img src="./dist/logo.svg" alt="Logo" class="block pt-6 h-40 w-auto">
-        <h1 class="text-orange">Money flies</h1>
+      <header class="col-span-full grid place-items-center">
+        <img src="./dist/logo.svg" alt="Logo" class="pt-6 h-40 w-auto">
+        <h1 class="text-orange" style="font-family: 'Montserrat', sans-serif;">Money flies</h1>
       </header>
 
       <!-- Content Sections -->
-      <div class="p-6">
+      <div class="col-span-full grid gap-6">
         <!-- Gráfica Section -->
-        <div class="grid p-6 col-span-full">
-          <h2 class="text-xl font-semibold mb-4 text-dark-gray dark:text-light-gray">Gastos Mensuales</h2>
-          <div id="gastosChart" class="w-full relative z-10 bg-white dark:bg-dark-gray rounded-lg p-4"></div>
-        </div>
+        <section class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+          <h2 class="text-2xl font-semibold mb-6 text-dark-gray dark:text-light-gray">Gastos Mensuales</h2>
+          <div id="gastosChart" class="w-full h-[300px] bg-white dark:bg-gray-800 rounded-lg"></div>
+        </section>
 
-        <!-- Totales por Categoría -->
-        <div class="grid p-6 col-span-full">
-          <h3 class="text-lg font-semibold mb-2 text-dark-gray dark:text-light-gray">Totales por Categoría</h3>
-          <div id="totalesCategorias" class="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <!-- Los totales se cargarán aquí dinámicamente -->
+        <!-- Tabla Section -->
+        <section class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+          <h2 class="text-2xl font-semibold mb-6 text-dark-gray dark:text-light-gray">Lista de Gastos</h2>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-600">
+              <thead class="bg-slate-50 dark:bg-slate-700">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-dark-gray dark:text-light-gray uppercase tracking-wider">Concepto</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-dark-gray dark:text-light-gray uppercase tracking-wider">Categoría</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-dark-gray dark:text-light-gray uppercase tracking-wider">Importe</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-dark-gray dark:text-light-gray uppercase tracking-wider">Fecha</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white dark:bg-gray-800 divide-y divide-slate-200 dark:divide-slate-600">
+                <!-- Los gastos se cargarán aquí dinámicamente -->
+              </tbody>
+            </table>
           </div>
-        </div>
-
-        <!-- Totales por Mes -->
-        <div class="grid p-6 col-span-full">
-          <h3 class="text-lg font-semibold mb-2 text-dark-gray dark:text-light-gray">Totales por Mes</h3>
-          <div id="totalesMeses" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <!-- Los totales mensuales se cargarán aquí dinámicamente -->
-          </div>
-        </div>
+        </section>
 
         <!-- Floating Buttons -->
         <div class="fixed top-32 right-6 z-30 flex flex-col space-y-2">
 
-
-
           <button id="themeToggle" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
             <svg id="sunIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
-              </path>
+                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
             <svg id="moonIcon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
-              </path>
+                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
             </svg>
           </button>
-
 
           <button id="toggleFormBtn"
             class="bg-orange text-white p-4 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
@@ -119,14 +118,13 @@
               class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
               Agregar gasto
             </div>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
           </button>
 
           <button id="exportBtn"
-            class="bg-accent text-white p-4 rounded-full shadow-lg hover:bg-emerald-600 transition-colors"
+            class="group bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-900 transition-colors"
             title="Exportar datos">
             <div
               class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
@@ -139,7 +137,8 @@
             </svg>
           </button>
 
-          <button id="importBtn" class=" text-slate-700 p-4 rounded-full shadow-lg hover:bg-slate-50 transition-colors"
+          <button id="importBtn" 
+            class="group bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-900 transition-colors"
             title="Importar datos">
             <div
               class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
@@ -153,7 +152,7 @@
           </button>
 
           <button id="reportBtn"
-            class="bg-primary text-white p-4 rounded-full shadow-lg hover:bg-slate-700 transition-colors"
+            class="group bg-black text-white p-4 rounded-full shadow-lg hover:bg-gray-900 transition-colors"
             title="Generar reporte">
             <div
               class="absolute right-14 bg-slate-800 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
@@ -167,31 +166,23 @@
           </button>
         </div>
 
-        <!-- Form Section -->
+        <!-- Form Container -->
         <div id="formContainer"
           class="p-6 fixed top-24 right-6 z-40 hidden bg-white dark:bg-dark-gray rounded-lg shadow-lg">
           <h2 class="text-xl font-semibold mb-4 text-dark-gray dark:text-light-gray">Nuevo Gasto</h2>
 
           <form id="gastoForm" class="space-y-4">
-            <div class="form-group">
-              <label for="descripcion"
-                class="block text-sm font-medium text-dark-gray dark:text-light-gray mb-1">Descripción:</label>
-              <input type="text" id="descripcion" required
-                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-dark-gray text-dark-gray dark:text-light-gray focus:ring-2 focus:ring-orange focus:border-orange">
+            <div>
+              <label for="concepto" class="block text-sm font-medium text-dark-gray dark:text-light-gray">Concepto</label>
+              <input type="text" id="concepto" name="concepto" required
+                class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-orange focus:ring-orange dark:bg-slate-700 dark:border-slate-600">
             </div>
 
-            <div class="form-group">
-              <label for="monto"
-                class="block text-sm font-medium text-dark-gray dark:text-light-gray mb-1">Monto:</label>
-              <input type="number" id="monto" step="0.01" required
-                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-dark-gray text-dark-gray dark:text-light-gray focus:ring-2 focus:ring-orange focus:border-orange">
-            </div>
-
-            <div class="form-group">
-              <label for="categoria"
-                class="block text-sm font-medium text-dark-gray dark:text-light-gray mb-1">Categoría:</label>
-              <select id="categoria" required
-                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-dark-gray text-dark-gray dark:text-light-gray focus:ring-2 focus:ring-orange focus:border-orange">
+            <div>
+              <label for="categoria" class="block text-sm font-medium text-dark-gray dark:text-light-gray">Categoría</label>
+              <select id="categoria" name="categoria" required
+                class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-orange focus:ring-orange dark:bg-slate-700 dark:border-slate-600">
+                <option value="">Selecciona una categoría</option>
                 <option value="Alimentación">Alimentación</option>
                 <option value="Transporte">Transporte</option>
                 <option value="Entretenimiento">Entretenimiento</option>
@@ -200,40 +191,29 @@
               </select>
             </div>
 
-            <div class="form-group">
-              <label for="fecha"
-                class="block text-sm font-medium text-dark-gray dark:text-light-gray mb-1">Fecha:</label>
-              <input type="date" id="fecha" required
-                class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 bg-white dark:bg-dark-gray text-dark-gray dark:text-light-gray focus:ring-2 focus:ring-orange focus:border-orange"
-                max="2025-12-31">
+            <div>
+              <label for="importe" class="block text-sm font-medium text-dark-gray dark:text-light-gray">Importe</label>
+              <input type="number" id="importe" name="importe" step="0.01" required
+                class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-orange focus:ring-orange dark:bg-slate-700 dark:border-slate-600">
             </div>
 
-            <button type="submit" class="w-full bg-orange text-white py-2 px-4 hover:bg-blue-600 transition-colors">
-              Agregar Gasto
-            </button>
+            <div>
+              <label for="fecha" class="block text-sm font-medium text-dark-gray dark:text-light-gray">Fecha</label>
+              <input type="date" id="fecha" name="fecha" required
+                class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-orange focus:ring-orange dark:bg-slate-700 dark:border-slate-600">
+            </div>
+
+            <div class="flex justify-end space-x-2">
+              <button type="button" id="cancelBtn"
+                class="px-4 py-2 text-sm font-medium text-dark-gray dark:text-light-gray bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange">
+                Cancelar
+              </button>
+              <button type="submit"
+                class="px-4 py-2 text-sm font-medium text-white bg-orange border border-transparent rounded-md shadow-sm hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange">
+                Guardar
+              </button>
+            </div>
           </form>
-        </div>
-
-        <!-- List Section -->
-        <div class="bg-white dark:bg-dark-gray p-6 rounded-lg">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold text-dark-gray dark:text-light-gray">Listado de Gastos</h2>
-            <div></div>
-          </div>
-
-          <table id="gastosTable" class="w-full">
-            <thead class="bg-slate-50 dark:bg-slate-700">
-              <tr class="text-left">
-                <th class="px-6 py-4 text-sm font-medium text-dark-gray dark:text-light-gray w-2/5">Descripción</th>
-                <th class="px-6 py-4 text-sm font-medium text-dark-gray dark:text-light-gray w-1/5">Monto</th>
-                <th class="px-6 py-4 text-sm font-medium text-dark-gray dark:text-light-gray w-1/5">Categoría</th>
-                <th class="px-6 py-4 text-sm font-medium text-dark-gray dark:text-light-gray w-1/5">Fecha</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-200 dark:divide-slate-600">
-              <!-- Los gastos se cargarán aquí dinámicamente -->
-            </tbody>
-          </table>
         </div>
       </div>
     </main>
@@ -243,8 +223,51 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
   <script>
     window.jsPDF = window.jspdf.jsPDF;
+
+    // Theme management
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+
+        if (!toggle || !html || !sunIcon || !moonIcon) {
+            console.error('Missing required elements');
+            return;
+        }
+
+        function setTheme(isDark) {
+            if (isDark) {
+                html.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                localStorage.theme = 'dark';
+            } else {
+                html.classList.remove('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+                localStorage.theme = 'light';
+            }
+        }
+
+        // Toggle theme on click
+        toggle.addEventListener('click', (event) => {
+            event.preventDefault();
+            const isDark = html.classList.contains('dark');
+            setTheme(!isDark);
+        });
+
+        // Set initial theme
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const storedTheme = localStorage.theme;
+        
+        if (storedTheme === 'dark' || (!storedTheme && prefersDark)) {
+            setTheme(true);
+        } else {
+            setTheme(false);
+        }
+    });
   </script>
-  <script src="./src/theme.js"></script>
   <script src="app.js"></script>
 </body>
 

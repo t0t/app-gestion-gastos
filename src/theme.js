@@ -1,36 +1,20 @@
 // Theme management
-import debug from 'debug';
-
-// Enable debugging in the browser
-localStorage.debug = 'theme:*';
-
-const log = debug('theme:main');
-const logToggle = debug('theme:toggle');
-const logTheme = debug('theme:set');
-
 document.addEventListener('DOMContentLoaded', function() {
-    log('Theme script loaded');
+    console.log('Theme script loaded');
 
     const toggle = document.getElementById('themeToggle');
     const html = document.documentElement;
     const sunIcon = document.getElementById('sunIcon');
     const moonIcon = document.getElementById('moonIcon');
 
-    log('Elements found: %O', {
-        toggle: !!toggle,
-        html: !!html,
-        sunIcon: !!sunIcon,
-        moonIcon: !!moonIcon
-    });
-
     if (!toggle || !html || !sunIcon || !moonIcon) {
-        log.error('Missing required elements');
+        console.error('Missing required elements');
         return;
     }
 
     function setTheme(isDark) {
-        logTheme('Setting theme to %s', isDark ? 'dark' : 'light');
-        logTheme('HTML classes before: %s', html.classList.toString());
+        console.log('Setting theme:', isDark ? 'dark' : 'light');
+        console.log('HTML classes before:', html.classList.toString());
         
         try {
             if (isDark) {
@@ -44,26 +28,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 moonIcon.classList.add('hidden');
                 localStorage.theme = 'light';
             }
-            logTheme('Theme set successfully');
+            console.log('Theme set successfully');
         } catch (error) {
-            logTheme.error('Error setting theme: %O', error);
+            console.error('Error setting theme:', error);
         }
         
-        logTheme('HTML classes after: %s', html.classList.toString());
+        console.log('HTML classes after:', html.classList.toString());
     }
 
     // Toggle theme on click
     toggle.addEventListener('click', (event) => {
-        logToggle('Toggle clicked');
+        console.log('Toggle clicked');
         const isDark = html.classList.contains('dark');
-        logToggle('Current dark mode: %s', isDark);
+        console.log('Current dark mode:', isDark);
         
         try {
             event.preventDefault();
             setTheme(!isDark);
-            logToggle('Theme toggled successfully');
+            console.log('Theme toggled successfully');
         } catch (error) {
-            logToggle.error('Error toggling theme: %O', error);
+            console.error('Error toggling theme:', error);
         }
     });
 
@@ -72,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const hasStoredTheme = 'theme' in localStorage;
     const storedTheme = localStorage.theme;
     
-    log('Initial theme setup: %O', {
+    console.log('Initial theme setup:', {
         prefersDark,
         hasStoredTheme,
         storedTheme

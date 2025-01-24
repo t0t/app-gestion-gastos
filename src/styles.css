@@ -10,4 +10,18 @@
         --light-gray: 237 242 247;
         --black: 26 32 44;
     }
+
+    /* Variables para el tema */
+    :root {
+        --background: var(--white);
+        --primary: var(--dark-gray);
+        --secondary: var(--orange);
+        --accent: var(--black);
+    }
+
+    :root.dark {
+        --background: var(--black);
+        --primary: var(--light-gray);
+        --secondary: var(--orange);
+    }
 }
