@@ -5,9 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "ntl dev",
+    "dev": "npx tailwindcss -i ./src/styles.css -o ./dist/output.css --watch & ntl dev",
     "build": "npx tailwindcss -i ./src/styles.css -o ./dist/output.css --watch",
-    "build:prod": "NODE_ENV=production npx tailwindcss -i ./src/styles.css -o ./dist/output.css --minify",
+    "build:prod": "node scripts/build.js",
     "test": "echo 'No tests configured'"
   },
   "dependencies": {
