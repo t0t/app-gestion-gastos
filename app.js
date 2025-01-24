@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const gastoForm = document.getElementById('gastoForm');
-  const gastosTable = document.getElementById('gastosTable').getElementsByTagName('tbody')[0];
+  const gastosContainer = document.getElementById('gastosContainer');
   const exportBtn = document.getElementById('exportBtn');
   const importBtn = document.getElementById('importBtn');
   const reportBtn = document.getElementById('reportBtn');
@@ -56,15 +56,29 @@ document.addEventListener('DOMContentLoaded', () => {
   // Función para cargar y mostrar los gastos
   function cargarGastos() {
     const gastos = JSON.parse(localStorage.getItem('gastos') || '[]');
+    const tbody = document.getElementById('gastosTable').getElementsByTagName('tbody')[0];
     
-    gastosTable.innerHTML = ''; // Limpiar tabla
+    tbody.innerHTML = ''; // Limpiar tabla
     
     gastos.forEach(gasto => {
-      const row = gastosTable.insertRow();
-      row.insertCell().textContent = gasto.descripcion;
-      row.insertCell().textContent = `€${gasto.monto.toFixed(2)}`;
-      row.insertCell().textContent = gasto.categoria;
-      row.insertCell().textContent = formatearFecha(gasto.fecha);
+      const row = tbody.insertRow();
+      row.className = 'hover:bg-slate-50 transition-colors';
+      
+      const desc = row.insertCell();
+      desc.className = 'px-6 py-4 text-slate-800';
+      desc.textContent = gasto.descripcion;
+      
+      const monto = row.insertCell();
+      monto.className = 'px-6 py-4 text-slate-700 font-medium text-right';
+      monto.textContent = `${gasto.monto.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2})} €`;
+      
+      const cat = row.insertCell();
+      cat.className = 'px-6 py-4 text-slate-600';
+      cat.textContent = gasto.categoria;
+      
+      const fecha = row.insertCell();
+      fecha.className = 'px-6 py-4 text-slate-500 text-sm';
+      fecha.textContent = formatearFecha(gasto.fecha);
     });
   }
 
@@ -118,35 +132,16 @@ document.addEventListener('DOMContentLoaded', () => {
     .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
-  // Selector de vista
-  const selector = d3.select(chartDiv)
-    .insert('div', ':first-child')
-    .style('position', 'absolute')
-    .style('top', '10px')
-    .style('left', '10px');
-
-  selector.append('select')
-    .attr('id', 'viewSelector')
-    .selectAll('option')
-    .data(['Días', 'Meses'])
-    .enter()
-    .append('option')
-      .text(d => d)
-      .attr('value', d => d);
-
   function actualizarGrafica() {
     const gastos = JSON.parse(localStorage.getItem('gastos') || '[]');
-    const view = document.getElementById('viewSelector').value;
 
-    // Agrupar gastos según la vista seleccionada
+    // Agrupar gastos por mes
     const groupedData = gastos.reduce((acc, gasto) => {
       try {
         const fecha = new Date(gasto.fecha);
         if (isNaN(fecha)) throw new Error('Fecha inválida');
         
-        const key = view === 'Días' ?
-          fecha.toISOString().split('T')[0] :
-          `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+        const key = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
         
         if (!acc[key]) {
           acc[key] = 0;
@@ -176,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .range([height, 0]);
 
     // Formatear fechas en el eje X
-    const formatDate = d3.timeFormat(view === 'Días' ? '%d/%m' : '%m/%Y');
+    const formatDate = d3.timeFormat('%m/%Y');
 
     // Ejes
     svg.selectAll('.axis').remove();
@@ -206,9 +201,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .attr('height', d => height - y(groupedData[d]))
         .attr('fill', '#3B82F6');
   }
-
-  // Actualizar gráfica al cambiar la vista
-  d3.select('#viewSelector').on('change', actualizarGrafica);
 
   function actualizarTotalesCategorias() {
     const gastos = JSON.parse(localStorage.getItem('gastos') || '[]');
