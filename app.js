@@ -82,6 +82,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Theme Toggle
+  const themeToggle = document.getElementById('themeToggle');
+  const sunIcon = document.getElementById('sunIcon');
+  const moonIcon = document.getElementById('moonIcon');
+  
+  // Verificar preferencia del sistema
+  const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+  
+  // Cargar tema guardado o usar preferencia del sistema
+  const currentTheme = localStorage.getItem('theme');
+  if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
+    document.documentElement.classList.add('dark');
+    sunIcon.classList.add('hidden');
+    moonIcon.classList.remove('hidden');
+  } else {
+    document.documentElement.classList.remove('dark');
+    sunIcon.classList.remove('hidden');
+    moonIcon.classList.add('hidden');
+  }
+  
+  // Manejar cambio de tema
+  themeToggle.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark');
+    sunIcon.classList.toggle('hidden');
+    moonIcon.classList.toggle('hidden');
+    
+    // Guardar preferencia
+    const isDark = document.documentElement.classList.contains('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  });
+  
   // Exportar datos
   exportBtn.addEventListener('click', () => {
     const gastos = JSON.parse(localStorage.getItem('gastos') || '[]');

@@ -4,23 +4,21 @@
   "description": "Aplicación de monitoreo y gestión de gastos",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "npx tailwindcss -i ./src/styles.css -o ./dist/output.css --watch & ntl dev",
-    "build": "npx tailwindcss -i ./src/styles.css -o ./dist/output.css --watch",
-    "build:prod": "node scripts/build.js",
+    "start": "node --no-deprecation server.js",
+    "dev": "NODE_ENV=development concurrently \"npx tailwindcss -i ./src/styles.css -o ./src/output.dev.css --watch\" \"ntl dev\"",
+    "build": "NODE_ENV=production npx tailwindcss -i ./src/styles.css -o ./dist/output.min.css --minify",
+    "build:prod": "npm run build && node scripts/build.js",
     "test": "echo 'No tests configured'"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.0.0",
-    "chart.js": "^4.4.7",
     "cors": "^2.8.5",
     "d3": "^7.9.0",
     "express": "^4.18.2",
-    "netlify-cli": "^12.0.0",
-    "plotly.js-dist": "^2.35.3"
+    "netlify-cli": "^12.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
+    "concurrently": "^7.6.0",
     "nodemon": "^3.0.2",
     "postcss": "^8.5.1",
     "tailwindcss": "^4.0.0"
